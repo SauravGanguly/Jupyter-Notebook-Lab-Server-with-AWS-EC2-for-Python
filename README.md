@@ -310,7 +310,7 @@ Note: the `my_jupyter.conf` name is arbitrary.
 ```     sudo supervisorctl reread       ```
 ```     sudo supervisorctl update       ```
 
-## 8. Navigate to your ip in web browser 
+## 8. Navigate to your Elastic ip in web browser 
 Boom! You now have a jupyter notebook server.
 
 ## 9. Thank you and next steps:
@@ -420,5 +420,7 @@ For Python3:
     ]
     }
 ```
-### Step 5:
-Restart Jupyter and toggle kernels to see if python versions are selected correctly in the back-end.
+### Step 5: Reboot EC2 Server
+```
+sudo reboot
+```
