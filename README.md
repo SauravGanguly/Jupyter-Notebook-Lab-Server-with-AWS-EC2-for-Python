@@ -362,9 +362,9 @@ For Python3:
 For Python2:
 ```     
 $python
-               > import sys
-               > print sys.executable
-               > The output for me was: /usr/bin/python
+       > import sys
+       > print sys.executable
+       > The output for me was: /usr/bin/python
 ```
 For Python3:
 ```
@@ -381,8 +381,9 @@ python2 /home/info/.local/share/jupyter/kernels/python2
 python3 /home/info/.local/share/jupyter/kernels/python3
 ### Step 4: Update the kernel.json file with the correct location pointers to python executable
 For Python2:
+
 ``` $sudo nano /usr/local/share/jupyter/kernels/python2/kernel.json```
-Eg:
+
 ```
     {
     "display_name": "Python 2",
@@ -396,8 +397,11 @@ Eg:
     ]
     }
 ```
+
 For Python3:
+
 ```$sudo nano /usr/local/share/jupyter/kernels/python3/kernel.json```
+
 ```
     {
     "display_name": "Python 3",
