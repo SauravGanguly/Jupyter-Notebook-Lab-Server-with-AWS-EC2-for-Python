@@ -12,13 +12,12 @@ You need a virtual private cloud (VPC) for your EC2 instances to actually work. 
 ## 1. Login to [AWS Console](https://console.aws.amazon.com/)
 ## 2. Select the `us-east-1` region, N. Virginia, top right corner
 ## 3. Navigate to [VPC](https://console.aws.amazon.com/vpc/)
- On the sidebar, click Your VPCs
-b. Click Create VPC
-c. In the Create subnet section, do the following: 
-*ame tag : JupyterVPC
-- IPv4 CIDR block: `10.0.0.0/16` The block `10.0.0.0/16` allows for 65,536 possible IP addresses for your VPC EC2 instances
-4. Click "Create"
-> 
+* On the sidebar, click Your VPCs
+* Click Create VPC
+* In the Create subnet section, do the following: 
+* Name tag : JupyterVPC
+* IPv4 CIDR block: `10.0.0.0/16` The block `10.0.0.0/16` allows for 65,536 possible IP addresses for your VPC EC2 instances
+* Click "Create"
 
 
 # Step 2: Create Subnet
@@ -27,29 +26,27 @@ For this series we just need 1 public subnet. A public subnet (vs a private one)
 * On the sidebar, click Subnets
 * Click Create subnet
 * In the Create subnet section, do the following:
-- Name tag : JupyterPublicSubnet
-- VPC: select the vpc from above
-- Availability Zone: You can select no preference or choose an AZ from the dropdown
-- IPv4 CIDR block: `10.0.1.0/24`
-
+* Name tag : JupyterPublicSubnet
+* VPC: select the vpc from above
+* Availability Zone: You can select no preference or choose an AZ from the dropdown
+* IPv4 CIDR block: `10.0.1.0/24`
 If you want multiple subnets, you'll need to use a CIDR block that has a smaller count. Counter to intuition, the last number needs to be higher in order to have a different block ie (`10.0.1.0/24` vs `10.0.0.0/16`).
+* Click "Create"
+* Select the Subnet newly created subnet
+* Under "Actions" select
+* Select "Modify auto-assign IP settings"
+* Check `Auto-assign IPv4`
+* Click "Save"
 
-5. Click "Create"
-6. Select the Subnet newly created subnet
-7. Under "Actions" select
-- Select "Modify auto-assign IP settings"
-- Check `Auto-assign IPv4`
-- Click "Save"
 
-5. Create Internet Gateway
-
-1. We're still in the VPC console
-2. On the sidebar, click Internet Gateways
-3. Click Create internet gateway
-4. In the Create internet gateway section, do the following:
-- Name tag : JupyterIGW
-1. Click "Create"
-2. Select newly created internet gateway. The current state should read `detached`
+# Step 3: Create Internet Gateway
+* We're still in the VPC console
+* On the sidebar, click Internet Gateways
+* Click Create internet gateway
+* In the Create internet gateway section, do the following:
+* Name tag : JupyterIGW
+* ick "Create"
+* lect newly created internet gateway. The current state should read `detached
 3. Under "actions", select "attach to VPC"
 4. Select your `JupyterVPC` created above.
 5. Click Attach
