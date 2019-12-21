@@ -175,12 +175,15 @@ Move into a working directory. Make sure your private key (created in last secti
 `<you-ip>` is your Elastic IP address.
 `<your private key>` is the private key you created above should be `JupyterKey.pem`
 The commands are:
-    ```chmod 400 <your private key>.pem
-       ssh ubuntu@<your-ip> -i <your private key>.pem```
+```    chmod 400 <your private key>.pem
+        ssh ubuntu@<your-ip> -i <your private key>.pem
+```
 My example:
-    ```cd path/to/my/dev/folder/
+```
+       cd path/to/my/dev/folder/
        chmod 400 JupyterKey.pem
-       ssh ubuntu@34.235.154.196 -i JupyterKey.pem```
+       ssh ubuntu@34.235.154.196 -i JupyterKey.pem
+```
 ## 2. Double check installs.
 In some cases you may have skipped the bootstrap scrips above. You can verify installs by just attempted to install again. Be sure to `ssh` into your EC2 instance first.
 ```
