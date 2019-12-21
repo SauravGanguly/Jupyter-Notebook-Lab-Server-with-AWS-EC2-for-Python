@@ -45,50 +45,46 @@ If you want multiple subnets, you'll need to use a CIDR block that has a smaller
 * Click Create internet gateway
 * In the Create internet gateway section, do the following:
 * Name tag : JupyterIGW
-* ick "Create"
-* lect newly created internet gateway. The current state should read `detached
-3. Under "actions", select "attach to VPC"
-4. Select your `JupyterVPC` created above.
-5. Click Attach
+* Click "Create"
+* Select newly created internet gateway. The current state should read `detached
+* Under "actions", select "attach to VPC"
+* Select your `JupyterVPC` created above.
+* Click Attach
 
-6. Update Routing Table
+
+# Step 4: Update Routing Table
 Your routing table allows the internet gateway to be accessed.
+* We're still in the VPC console
+* On the sidebar, click Route Tables
+* Select your JupyterVPC routing table. The Name tag will be under the `VPC ID` column
+* After selected, look for the Routes tab under the list of route tables.
+* Select Edit Routes
+* Click Add Route and add the following:
+* Destination: `0.0.0.0/0`
+* Target: Select "Internet Gateway" and find your JupyterIGW from above
+* Click Save Routes
 
-1. We're still in the VPC console
-2. On the sidebar, click Route Tables
-3. Select your JupyterVPC routing table. The Name tag will be under the `VPC ID` column
-4. After selected, look for the Routes tab under the list of route tables.
-5. Select Edit Routes
-6. Click Add Route and add the following:
-- Destination: `0.0.0.0/0`
-- Target: Select "Internet Gateway" and find your JupyterIGW from above
-7. Click Save Routes
-Provision an EC2 Instance
-
-1. Login to AWS Console
-2. Select the `us-east-1` region, N. Virginia, top right corner
-3. Navigate to EC2 and create an Ubuntu Instance
-We'll use Ubuntu since setting it up for what we need is simple enough. If you did our project hello linux, you'll be able to do literally all of that with an Ubuntu EC2 as well.
-
-1. On the sidebar, click Instances
-2. Click Launch Instance
-
-Step 1. Choose an Amazon Machine Image (AMI)
-
-- Search and select Ubuntu Server 18.04 LTS
-- Use 64-bit (x86)
-- Click Select
-
-Step 2. Choose an Instance Type
-
-- If it's your first few times doing this, use `t2.micro`. Since it's a free tier.
-- Click Next: Configure Instance Details
-
-Step 3: Configure Instance Details
+# Step 5: Provision an EC2 Instance
+## 1. Login to [AWS Console](https://console.aws.amazon.com/)
+## 2. Select the `us-east-1` region, N. Virginia, top right corner
+## 3. Navigate to [EC2](https://console.aws.amazon.com/ec2/) and create an Ubuntu Instance
+We'll use Ubuntu since setting it up for what we need is simple enough.
+* On the sidebar, click Instances
+* Click Launch Instance
+### Step 1. Choose an Amazon Machine Image (AMI)
+* Search and select Ubuntu Server 18.04 LTS
+* Use 64-bit (x86)
+* Click Select
+### Step 2. Choose an Instance Type
+* If it's your first few times doing this, use `t2.micro`. Since it's a free tier.
+* Click Next: Configure Instance Details
+### Step 3: Configure Instance Details
 We'll use the following details:
-Number of instances | 1 Network | Select your Jupyter VPC from above Subnet | It should auto-populate if you created 1 subnet. If not, be sure to get the public subnet
+* Number of instances - 1 
+* Network - Select your Jupyter VPC from above 
+* Subnet - It should auto-populate if you created 1 subnet. If not, be sure to get the public subnet
 
-- Advanced Details / Bootstrap Scripts This will run the installations we need prior to going into this EC2 instance. As we configure the instance, un-collapse the Advanced Details tab and add the following in `User data` as text
+*  Advanced Details / Bootstrap Scripts This will run the installations we need prior to going into this EC2 instance. As we configure the instance, un-collapse the Advanced Details tab and add the following in `User data` as text
 
 ```
     #!/bin/bash
@@ -119,81 +115,75 @@ Number of instances | 1 Network | Select your Jupyter VPC from above Subnet | It
     
     sudo apt autoremove -y
 ```
-- Click Next: Add Storage
 
-Step 4: Add Storage
-Use the defaults. Notice that Delete on Termination is checked this means that everything related to this instance will be gone once you terminate it.
-
-- Click Next: Add Tags
-
-Step 5: Add Tags
+* Click Next: Add Storage
+### Step 4: Add Storage
+Use the defaults or change the size up to 30GB. Notice that Delete on Termination is checked this means that everything related to this instance will be gone once you terminate it.
+* Click Next: Add Tags
+### Step 5: Add Tags
 Add tags if you want. I'll leave them empty
-
-- Click Next: Add Tags
-
-Step 6: Configure Security Group
+* Click Next: Add Tags
+### Step 6: Configure Security Group
 We'll create a new security group. With a security group, we can add support for HTTP, HTTPS, and SSH. Since the Jupyter notebook server needs at least http, we'll add that too.
-
-- Assign a security group: Check Create a new security group
-- Security group name: JupyterSecurityGroup
-- Description: Leave default
-- Click Add rule and fill in the following:
-    - Type: Http
-- Click Add rule and fill in the following:
-    - Type: Https
-
+* Assign a security group: Check Create a new security group
+* Security group name: JupyterSecurityGroup
+* Description: Leave default
+* Click Add rule and fill in the following:
+    * Type: Http
+* Click Add rule and fill in the following:
+    *  Type: Https
 You should now have 3 rules for this security group.
-
-- Click Review and Launch
-
-Step 7: Review Instance Launch
+* Click Review and Launch
+### Step 7: Review Instance Launch
 Review the details.
-
-- Click Launch
-
-You should see a pop up for "key pairs"
-
-- Select "Create a new key pair"
-- In Key pair name add `JupyterKey`, this is how you'll be able to ssh into your vpc.
-- Select "Download Key Pair"
-- Select "Launch Instance"
-- Select "View Instances"
-- Under "Description" for your newly created instance, look for and copy your IPv4 Public IP
-
-Step 8: Wait
+* Click Launch
+### Step 8: You should see a pop up for "key pairs"
+* Select "Create a new key pair"
+* In Key pair name add `JupyterKey`, this is how you'll be able to ssh into your vpc.
+* Select "Download Key Pair"
+* Select "Launch Instance"
+* Select "View Instances"
+* Under "Description" for your newly created instance, look for and copy your IPv4 Public IP
+### Step 9 . Assign an Elastic IP
+Now we want to be able to stop our EC2 instance and restart it at anytime. We're going to do this by using an Elastic IP
+*  Go into EC2
+*  On the sidebar, under "Network and security" select "Elastic IP"
+* Click "Allocate new address"
+* Under "IPv4 address pool" choose "Amazon Pool"
+* Click "Allocate"
+* Click "close"
+* Select New Elastic IP, click "Actions > Associate Address" and:
+* Use the "Instance" resource
+* Select your instance
+* Select your instance private ip
+* Check "Allow Elastic IP to be reassociated if already attached"
+* Click "Associate"
+* You now have an IP address that you can reuse.
+### Step 10: Wait
 Your EC2 is going to take a few minutes to provision and then install all of our bootstrap scripts.
-Open up your browser to your IPv4 Public IP something like:
-
-    http://34.235.154.196
-
+Open up your browser to your Elastic IP something like: ```http://34.235.154.196```
 You should see a default nginx page which means it's working!
 
-Provision the Jupyter Server
 
+# Step 6: Provision the Jupyter Server
 Above we created an `pem` private key so we can ssh into our EC2 instance. If you lost this or need a new one, the easies option is to launch a new EC2 instance. You won't need to create another VPC because that's already created.
-1. SSH into EC2
+## 1. SSH into EC2
 SSH means "secure shell" which means you can type commands on a remote device. In our case, it's our EC2 instance.
-
-- Mac / Linux users: use Terminal
-- Windows users: use PowerShell or PuTTy
-
+* Mac / Linux users: use Terminal
+* Windows users: use PowerShell or PuTTy
 Move into a working directory. Make sure your private key (created in last section) is there too. A couple things to note:
-`<you-ip>` is your IPv4 Public IP address.
+`<you-ip>` is your Elastic IP address.
 `<your private key>` is the private key you created above should be `JupyterKey.pem`
 The commands are:
-
-    chmod 400 <your private key>.pem
-    ssh ubuntu@<your-ip> -i <your private key>.pem
-
+    ```chmod 400 <your private key>.pem
+       ssh ubuntu@<your-ip> -i <your private key>.pem```
 My example:
-
-    cd path/to/my/dev/folder/
-    chmod 400 JupyterKey.pem
-    ssh ubuntu@34.235.154.196 -i JupyterKey.pem
-
-2. Double check installs.
+    ```cd path/to/my/dev/folder/
+       chmod 400 JupyterKey.pem
+       ssh ubuntu@34.235.154.196 -i JupyterKey.pem```
+## 2. Double check installs.
 In some cases you may have skipped the bootstrap scrips above. You can verify installs by just attempted to install again. Be sure to `ssh` into your EC2 instance first.
-
+```
     sudo apt-get update -y
     
     sudo apt-get install build-essential libssl-dev libpq-dev libcurl4-gnutls-dev libexpat1-dev gettext unzip -y
@@ -219,32 +209,21 @@ In some cases you may have skipped the bootstrap scrips above. You can verify in
     sudo service supervisor start
     
     sudo apt autoremove -y
-
-3. Generate Jupyter Config
-`jupyter notebook --generate-config`
+```
+## 3. Generate Jupyter Config
+        `jupyter notebook --generate-config`
 This command will create configuration file we need to deploy run a jupyter notebook server. If it fails, there's a good chance you didn't do the installations correctly.
-The config file should be located under
-`/home/ubuntu/.jupyter/jupyter_notebook_config.py`
-Get Your public ip address
-
-    ipAdd=`curl http://169.254.169.254/latest/meta-data/public-ipv4`
-    echo "${ipAdd}"
-
-Why is this here? I added this for future reference so you can make more advanced bootstrap scripts
+The config file should be located under `/home/ubuntu/.jupyter/jupyter_notebook_config.py`
+## 4. Create default password
 Create your default password Our configuration will not work as you may work locally. We want to password protect our jupyter environment. Running this command will allow you to add a password and it will return an encrypted string.
-
-    ipython -c "from notebook.auth import passwd; passwd()"
-
+```     ipython -c "from notebook.auth import passwd; passwd()" ```
 Enter the above command, enter your passwrod, and you'l get the following output:
-
-    'sha1:45e47cb75d9e:49dc0b09f4e671485b6113c1e2c5a13d7d37fa78'
-
+```     'sha1:45e47cb75d9e:49dc0b09f4e671485b6113c1e2c5a13d7d37fa78'    ```
 Be sure to copy that output.
-Update our configuration for live running.
+## 5. Update our configuration for live running.
+```     sudo nano /home/ubuntu/.jupyter/jupyter_notebook_config.py  ```
 
-    sudo nano /home/ubuntu/.jupyter/jupyter_notebook_config.py
-
-
+```
     c = get_config()
     
     # Kernel config
@@ -252,7 +231,7 @@ Update our configuration for live running.
     
     # Notebook config
     
-    c.NotebookApp.allow_origin = 'http://107.21.189.212' # put your public IP Address here
+    c.NotebookApp.allow_origin = 'http://107.21.189.212' # put your Elastic IP Address here or simply put '*' to allow all origin
     c.NotebookApp.ip = '*'
     c.NotebookApp.allow_remote_access = True
     c.NotebookApp.open_browser = False
@@ -262,19 +241,19 @@ Update our configuration for live running.
     # For https & letsencrypt later
     # c.NotebookApp.certfile = u'/your/cert/path/cert.pem'
     # c.NotebookApp.keyfile = u'/your/cert/path/privkey.pem'
+```
 
 `c.NotebookApp.allow_origin` this setting is very important. Make sure you put your same public IP address here otherwise you're not going to be to connect to the Jupyter kernel because of CORS errors.
 
-> Official Jupyter Config docs
+Official Jupyter Config [docs](https://jupyter-notebook.readthedocs.io/en/stable/config.html)
 
-4. Nginx Settings
+
+## 6. Nginx Settings
 Now we can configure nginx as to be routed to the jupyter server. You can 100% use Apache2 instead but nginx is very easy to configure amoung many other strengths.
 Note: the `jupyter_app.conf` name is arbitrary.
+```     sudo nano /etc/nginx/sites-available/jupyter_app.conf       ```
 
-
-    sudo nano /etc/nginx/sites-available/jupyter_app.conf
-
-
+```
     server {
         server_name jupyter_notebook;
         listen 80;
@@ -294,27 +273,24 @@ Note: the `jupyter_app.conf` name is arbitrary.
             proxy_read_timeout 86400;
         }
     }
+```
 
 If you intend to use a custom domain, replace `server_name jupyter_notebook;` with `server_name your_custom_domain.com;`
-
-
-    sudo ln -s /etc/nginx/sites-available/jupyter_app.conf /etc/nginx/sites-enabled/jupyter_app.conf
+ 
+```     sudo ln -s /etc/nginx/sites-available/jupyter_app.conf /etc/nginx/sites-enabled/jupyter_app.conf        ```
     
-    sudo rm /etc/nginx/sites-enabled/default
+```     sudo rm /etc/nginx/sites-enabled/default        ```
 
+```     sudo systemctl daemon-reload        ```
 
-    sudo systemctl daemon-reload
-    
-    sudo systemctl reload nginx
+```     sudo systemctl reload nginx     ```
 
-5. Setup Supervisor
+## 7. Setup Supervisor
 Create supervisor program to ensure jupyter runs in the background and restarts if the EC2 instance is restarted.
 Note: the `my_jupyter.conf` name is arbitrary.
+```     sudo nano /etc/supervisor/conf.d/my_jupyter.conf        ```
 
-
-    sudo nano /etc/supervisor/conf.d/my_jupyter.conf
-
-
+```
     [program:my_jupyter]
     user=ubuntu
     directory=/home/ubuntu
@@ -323,125 +299,117 @@ Note: the `my_jupyter.conf` name is arbitrary.
     autorestart=true
     stdout_logfile=/var/log/my_jupyter/stdout.log
     stderr_logfile=/var/log/my_jupyter/stderr.log
+```
 
+```     sudo mkdir /var/log/my_jupyter      ```
 
-    sudo mkdir /var/log/my_jupyter
+```     sudo supervisorctl reread       ```
+```     sudo supervisorctl update       ```
 
-
-    sudo supervisorctl reread
-    sudo supervisorctl update
-
-6. Navigate to your ip
+## 8. Navigate to your ip in web browser 
 Boom! You now have a jupyter notebook server.
-7. Assign an Elastic IP
-Now we want to be able to stop our EC2 instance and restart it at anytime. We're going to do this by using an Elastic IP
 
-1. Go into EC2
-2. On the sidebar, under "Network and security" select "Elastic IP"
-3. Click "Allocate new address"
-- Under "IPv4 address pool" choose "Amazon Pool"
-- Click "Allocate"
-- Click "close"
-4. Select New Elastic IP, click "Actions > Associate Address" and:
-- Use the "Instance" resource
-- Select your instance
-- Select your instance private ip
-- Check "Allow Elastic IP to be reassociated if already attached"
-- Click "Associate"
-5. You now have an IP address that you can reuse. Update the above configuration for your new IP Address.
+## 9. Thank you and next steps:
+* Auto shutdown timer. What if you accidentally forget to shutdown your instance? You'll be billed for all that time. That's not a big deal when you're using the `t2.micro` but if you move to a more powerful EC2 instance, then it's a really good idea to have an auto shutdown timer.
+* Add HTTPs with LetsEncrypt. Above we left some configuration notes to do this exactly
+* Run this step on a GPU-enabled EC2 instance so you can do machine learning
+* Try to use JupyterHub so you can have many of your own users.
+* Create an EC2 AMI for re-using your Jupyter server.
 
-8. Thank you and next steps:
+# Optional --
+## 1. Install Jupyter Lab
+* SSH into EC2
+* Check Pthon version ```python --version``
+* For python2
+```     sudo pip install jupyterlab      ``` 
+* For pyhon3
+```     sudo pip3 install jupyterlab         ```
 
-1. Auto shutdown timer. What if you accidentally forget to shutdown your instance? You'll be billed for all that time. That's not a big deal when you're using the `t2.micro` but if you move to a more powerful EC2 instance, then it's a really good idea to have an auto shutdown timer.
-2. Add HTTPs with LetsEncrypt. Above we left some configuration notes to do this exactly
-3. Run this step on a GPU-enabled EC2 instance so you can do machine learning
-4. Try to use JupyterHub so you can have many of your own users.
-5. Create an EC2 AMI for re-using your Jupyter server.
-----------
-Troubleshooting with Jupyter notebook
-1. Jupyter running worng python (version) kernel
+## 2. Install Jupyter Notebook Extensions
+### Install the python package
+```     sudo pip install jupyter_contrib_nbextensions        ```
+### Install javascript and css files
+```     jupyter contrib nbextension install --user      ```
+### Install Jupyter Nbextensions Configurator
+```     sudo pip install jupyter_nbextensions_configurator       ```
+### Enable Jupyter Nbextensions Configurator 
+```     jupyter nbextensions_configurator enable --user     ```
+* For Pyhton3 use pip3
 
-Step 1:
-Install all the necessary dependencies:
+# Troubleshooting with Jupyter notebook
+## 1. Jupyter running worng python (version) kernel
+### * SSH into EC2
+### Step 1: Install all the necessary dependencies:
 For Python2:
-$sudo apt-get install python-setuptools python-dev build-essential
-$sudo easy_install pip
-$python2 -m pip --version
-$python2 -m pip install ipykernel
-$sudo python2 -m ipykernel install --user
-$pip install -U jupyter ipython
+```
+    $sudo apt-get install python-setuptools python-dev build-essential
+    $sudo easy_install pip
+    $python2 -m pip --version
+    $python2 -m pip install ipykernel
+    $sudo python2 -m ipykernel install --user
+    $pip install -U jupyter ipython
+```
 For Python3:
-$sudo apt-get install python3-setuptools python3-dev build-essential
-$sudo apt-get install python3-pip
-$python3 -m pip --version
-$sudo python3 -m pip install ipykernel
-$sudo python3 -m ipykernel install --user
-$sudo pip3 install -U jupyter ipython
-Step 2:
-Find the python executable locations for each version of Python and available kernels for Jupyter:
+```
+    $sudo apt-get install python3-setuptools python3-dev build-essential
+    $sudo apt-get install python3-pip
+    $python3 -m pip --version
+    $sudo python3 -m pip install ipykernel
+    $sudo python3 -m ipykernel install --user
+    $sudo pip3 install -U jupyter ipython
+```
+### Step 2: Find the python executable locations for each version of Python and available kernels for Jupyter:
 For Python2:
+```     
 $python
-
-        > import sys
-        > print sys.executable
-        > The output for me was: /usr/bin/python
-
+               > import sys
+               > print sys.executable
+               > The output for me was: /usr/bin/python
+```
 For Python3:
+```
 $python3
-
         > import sys
         > print (sys.executable)
         > The output for me was: /usr/bin/python3
-
-To get the list of available kernels:
-$jupyter kernelspec list
+```
+### Step3: To get the list of available kernels:
+``$jupyter kernelspec list``
 The output for me was:
 Available kernels:
 python2 /home/info/.local/share/jupyter/kernels/python2
 python3 /home/info/.local/share/jupyter/kernels/python3
-Step 3:
-Update the kernel.json file with the correct location pointers to python executable
+### Step 4: Update the kernel.json file with the correct location pointers to python executable
 For Python2:
-$sudo nano /usr/local/share/jupyter/kernels/python2/kernel.json
+``` $sudo nano /usr/local/share/jupyter/kernels/python2/kernel.json```
 Eg:
-{
-"display_name": "Python 2",
-"language": "python",
-"argv": [
-"/usr/bin/python",
-"-m",
-"ipykernel_launcher",
-"-f",
-"{connection_file}"
-]
-}
+```
+    {
+    "display_name": "Python 2",
+    "language": "python",
+    "argv": [
+    "/usr/bin/python",
+    "-m",
+    "ipykernel_launcher",
+    "-f",
+    "{connection_file}"
+    ]
+    }
+```
 For Python3:
-$sudo nano /usr/local/share/jupyter/kernels/python3/kernel.json
-{
-"display_name": "Python 3",
-"language": "python",
-"argv": [
-"/usr/bin/python3",
-"-m",
-"ipykernel_launcher",
-"-f",
-"{connection_file}"
-]
-}
-Step 4:
+```$sudo nano /usr/local/share/jupyter/kernels/python3/kernel.json```
+```
+    {
+    "display_name": "Python 3",
+    "language": "python",
+    "argv": [   
+    "/usr/bin/python3",
+    "-m",
+    "ipykernel_launcher",
+    "-f",   
+    "{connection_file}"
+    ]
+    }
+```
+### Step 5:
 Restart Jupyter and toggle kernels to see if python versions are selected correctly in the back-end.
-
-
-2. Install Jupyter Lab
-    pip install jupyterlab
-
-
-3. Install Jupyter Notebook Extensions
-Step 1: Install the python package
-    pip install jupyter_contrib_nbextensions
-Step 2: Install javascript and css files
-    jupyter contrib nbextension install --user
-Step 3: Install Jupyter Nbextensions Configurator
-    pip install jupyter_nbextensions_configurator
-Step 4: Enable Jupyter Nbextensions Configurator 
-    jupyter nbextensions_configurator enable --user
