@@ -11,7 +11,7 @@ alt="Watch full guide in vedio" width="240" height="180" border="10" /></a>
 # Step 1: Create your VPC
 You need a virtual private cloud (VPC) for your EC2 instances to actually work. I think it's best to work through this on your own. There isn't extra cost for VPCs so you can practice this portion as many times as you'd like.
 ## 1. Login to [AWS Console](https://console.aws.amazon.com/)
-## 2. Select the `us-east-1` region, N. Virginia, top right corner
+## 2. Select the `ap-south-1` region, Asia Pacific (Mumbai), top right corner
 ## 3. Navigate to [VPC](https://console.aws.amazon.com/vpc/)
 * On the sidebar, click Your VPCs
 * Click Create VPC
@@ -67,7 +67,7 @@ Your routing table allows the internet gateway to be accessed.
 
 # Step 5: Provision an EC2 Instance
 ## 1. Login to [AWS Console](https://console.aws.amazon.com/)
-## 2. Select the `us-east-1` region, N. Virginia, top right corner
+## 2. Select the `ap-south-1` region, Asia Pacific (Mumbai), top right corner
 ## 3. Navigate to [EC2](https://console.aws.amazon.com/ec2/) and create an Ubuntu Instance
 We'll use Ubuntu since setting it up for what we need is simple enough.
 * On the sidebar, click Instances
