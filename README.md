@@ -1,8 +1,7 @@
 # Jupyter-Notebook-Lab-Server-with-AWS-EC2-and-AWS-VPC for Python
 This is a step-by-step guide to deploying a Jupyter Notebook Server to AWS EC2 and AWS VPC.
 
-Watch full guide in vedio -
-
+Watch full guide in video -
 <br>
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=FEBYi8Ia8bk
 " target="_blank"><img src="http://img.youtube.com/vi/FEBYi8Ia8bk/0.jpg" 
