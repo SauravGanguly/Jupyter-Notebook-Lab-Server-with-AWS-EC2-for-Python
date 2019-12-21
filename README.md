@@ -1,7 +1,9 @@
-# Jupyter-Notebook-Lab-Server-with-AWS-EC2-and-AWS-VPC
+# Jupyter-Notebook-Lab-Server-with-AWS-EC2-and-AWS-VPC for Python
 This is a step-by-step guide to deploying a Jupyter Notebook Server to AWS EC2 and AWS VPC.
 
-Watch full guide in vedio -<br>
+Watch full guide in vedio -
+
+<br>
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=FEBYi8Ia8bk
 " target="_blank"><img src="http://img.youtube.com/vi/FEBYi8Ia8bk/0.jpg" 
 alt="Watch full guide in vedio" width="240" height="180" border="10" /></a>
@@ -322,7 +324,8 @@ Boom! You now have a jupyter notebook server.
 # Optional --
 ## 1. Install Jupyter Lab
 * SSH into EC2
-* Check Pthon version ```python --version``
+* Check Pthon version 
+```     python --version    ```
 * For python2
 ```     sudo pip install jupyterlab      ``` 
 * For pyhon3
